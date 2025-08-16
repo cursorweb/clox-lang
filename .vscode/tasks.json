@@ -1,0 +1,9 @@
+{
+    "tasks": [
+        {
+            "label": "be gay",
+            "command": "echo gay"
+        }
+    ],
+    "version": "2.0.0"
+}

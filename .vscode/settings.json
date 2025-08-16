@@ -1,0 +1,12 @@
+{
+    "files.associations": {
+        "chunk.h": "c",
+        "debug.h": "c",
+        "common.h": "c"
+    },
+    "files.exclude": {
+        "**/*.obj": true,
+        "**/*.pdb": true,
+        "**/*.ilk": true,
+    }
+}
