@@ -2,22 +2,31 @@
 #include "value.h"
 #include <stdio.h>
 
-int constant_instr(const char* name, Chunk* chunk, int offset)
+static int constant_instr(const char* name, Chunk* chunk, int offset)
 {
     uint8_t const_idx = chunk->code[offset + 1];
     printf("%-16s %4d '", name, const_idx);
     print_value(chunk->constants.values[const_idx]);
-    printf("'");
+    printf("'\n");
 
     // OP_CONSTANT (ptr)
     return offset + 2;
 }
 
-int simple_instr(const char* name, int offset)
+static int simple_instr(const char* name, int offset)
 {
     printf("%s\n", name);
 
     return offset + 1;
+}
+
+void disassemble_chunk(Chunk* chunk, const char* name)
+{
+    printf("== %s ==\n", name);
+    for (int offset = 0; offset < chunk->count;)
+    {
+        offset = disassemble_instr(chunk, offset);
+    }
 }
 
 int disassemble_instr(Chunk* chunk, int offset)
@@ -34,32 +43,29 @@ int disassemble_instr(Chunk* chunk, int offset)
     }
 
     uint8_t instr = chunk->code[offset];
-    int new_offset = 0;
 
     switch (instr)
     {
     case OP_CONSTANT:
-        new_offset = constant_instr("OP_CONSTANT", chunk, offset);
-        break;
+        return constant_instr("OP_CONSTANT", chunk, offset);
+
+    case OP_ADD:
+        return simple_instr("OP_ADD", offset);
+    case OP_SUB:
+        return simple_instr("OP_SUB", offset);
+    case OP_MULT:
+        return simple_instr("OP_MULT", offset);
+    case OP_DIV:
+        return simple_instr("OP_DIV", offset);
+
+    case OP_NEGATE:
+        return simple_instr("OP_NEGATE", offset);
+
     case OP_RETURN:
-        new_offset = simple_instr("OP_RETURN", offset);
-        break;
+        return simple_instr("OP_RETURN", offset);
 
     default:
-        printf("Unknown opcode %d", instr);
-        new_offset = offset + 1;
-        break;
-    }
-    printf("\n");
-
-    return new_offset;
-}
-
-void disassemble_chunk(Chunk* chunk, const char* name)
-{
-    printf("== %s ==\n", name);
-    for (int offset = 0; offset < chunk->count;)
-    {
-        offset = disassemble_instr(chunk, offset);
+        printf("Unknown opcode %d\n", instr);
+        return offset + 1;
     }
 }

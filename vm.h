@@ -31,3 +31,6 @@ void init_vm();
 void free_vm();
 
 InterpretResult interpret(Chunk* chunk);
+
+void push(Value value);
+Value pop();

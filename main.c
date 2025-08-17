@@ -9,9 +9,21 @@ int main(int argc, char* argv[])
     Chunk chunk;
     init_chunk(&chunk);
 
-    int const_idx = add_constant(&chunk, 6.7);
+    // -((1.2 + 3.4) / 5.6)
     write_chunk(&chunk, OP_CONSTANT, 123);
-    write_chunk(&chunk, const_idx, 123);
+    write_chunk(&chunk, add_constant(&chunk, 1.2), 123);
+
+    write_chunk(&chunk, OP_CONSTANT, 123);
+    write_chunk(&chunk, add_constant(&chunk, 3.4), 123);
+
+    write_chunk(&chunk, OP_ADD, 123);
+
+    write_chunk(&chunk, OP_CONSTANT, 123);
+    write_chunk(&chunk, add_constant(&chunk, 5.6), 123);
+
+    write_chunk(&chunk, OP_DIV, 123);
+
+    write_chunk(&chunk, OP_NEGATE, 123);
 
     write_chunk(&chunk, OP_RETURN, 123);
 
