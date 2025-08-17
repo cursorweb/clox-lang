@@ -1,20 +1,17 @@
-# build.ps1
-# Compile all .c files in the current directory with cl.exe
-
-# Set the output executable name
 $outputExe = "main.exe"
 
 # Compile using cl.exe
 # /Zi -> generate debug info
-# /EHsc -> standard C++ exception handling (ignored for C)
 # /nologo -> suppress banner
 # /Fe -> specify output executable
-$command = "cl.exe /sdl /W3 /WX /Zi /EHsc /nologo /Fe$outputExe *.c"
+# W3 -> Level 3 warnings
+# WX -> warnings are errors
+# SDL -> safety warnings
+$command = "cl.exe /sdl /W3 /WX /Zi /nologo /Fe$outputExe *.c"
 
 Write-Host "Running: $command"
 Invoke-Expression $command
 
-# Check if compilation succeeded
 if ($LASTEXITCODE -eq 0) {
     Write-Host "Compilation succeeded! Output: $outputExe"
 } else {

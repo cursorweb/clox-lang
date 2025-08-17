@@ -1,6 +1,11 @@
 # CLOX
 [https://craftinginterpreters.com/](https://craftinginterpreters.com/)
 
+## Building
+Use the *x86 native tools command prompt* to open vscode.
+Then, run `./build.ps1`
+You can clean build files using `./clean.ps1`
+
 ## Chunks and stuff
 `chunk.h` A *chunk* is a chunk of bytecode ~ AST. It contains:
 * a vector that contains instructions aka code aka opcode

@@ -28,13 +28,14 @@ static InterpretResult run()
 #define READ_BYTE() (*vm.ip++)
 #define READ_CONSTANT() (vm.chunk->constants.values[READ_BYTE()])
 // using a do while loop lets you add semicolon at the end of it.
-// b comes first, because first in *last* out!
+// b comes first, because last in *first* out!
 #define BINARY_OP(op)                                                          \
     do                                                                         \
     {                                                                          \
-        double b = pop();                                                      \
-        double a = pop();                                                      \
-        push(a op b);                                                          \
+        double b = vm.stack_top[-1];                                           \
+        double a = vm.stack_top[-2];                                           \
+        vm.stack_top[-2] = a op b;                                             \
+        vm.stack_top--;                                                        \
     } while (false)
 
     while (true)
@@ -74,7 +75,8 @@ static InterpretResult run()
             break;
         case OP_NEGATE:
         {
-            push(-pop());
+            // a[b] is same as *(vm.stack_top - 1)
+            vm.stack_top[-1] = -vm.stack_top[-1];
         }
         break;
         case OP_RETURN:
