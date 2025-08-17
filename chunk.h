@@ -14,11 +14,13 @@ typedef struct Chunk
     int count;
     int capacity;
 
+    // ~vector
     // contains instructions as well as values
     // the * here means array and NOT a reference
     uint8_t* code;
     // parallel 'array' to code.
     int* lines;
+
     ValueArray constants;
 } Chunk;
 

@@ -9,7 +9,7 @@ $outputExe = "main.exe"
 # /EHsc -> standard C++ exception handling (ignored for C)
 # /nologo -> suppress banner
 # /Fe -> specify output executable
-$command = "cl.exe /sdl /WX /Zi /EHsc /nologo /Fe$outputExe *.c"
+$command = "cl.exe /sdl /W3 /WX /Zi /EHsc /nologo /Fe$outputExe *.c"
 
 Write-Host "Running: $command"
 Invoke-Expression $command

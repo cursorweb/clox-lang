@@ -2,13 +2,22 @@
 #include "value.h"
 #include <stdio.h>
 
-void disassemble_chunk(Chunk* chunk, const char* name)
+int constant_instr(const char* name, Chunk* chunk, int offset)
 {
-    printf("== %s ==\n", name);
-    for (int offset = 0; offset < chunk->count;)
-    {
-        offset = disassemble_instr(chunk, offset);
-    }
+    uint8_t const_idx = chunk->code[offset + 1];
+    printf("%-16s %4d '", name, const_idx);
+    print_value(chunk->constants.values[const_idx]);
+    printf("'");
+
+    // OP_CONSTANT (ptr)
+    return offset + 2;
+}
+
+int simple_instr(const char* name, int offset)
+{
+    printf("%s\n", name);
+
+    return offset + 1;
 }
 
 int disassemble_instr(Chunk* chunk, int offset)
@@ -46,20 +55,11 @@ int disassemble_instr(Chunk* chunk, int offset)
     return new_offset;
 }
 
-int constant_instr(const char* name, Chunk* chunk, int offset)
+void disassemble_chunk(Chunk* chunk, const char* name)
 {
-    uint8_t const_idx = chunk->code[offset + 1];
-    printf("%-16s %4d '", name, const_idx);
-    print_value(chunk->constants.values[const_idx]);
-    printf("'");
-
-    // OP_CONSTANT (ptr)
-    return offset + 2;
-}
-
-int simple_instr(const char* name, int offset)
-{
-    printf("%s\n", name);
-
-    return offset + 1;
+    printf("== %s ==\n", name);
+    for (int offset = 0; offset < chunk->count;)
+    {
+        offset = disassemble_instr(chunk, offset);
+    }
 }
