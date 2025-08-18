@@ -6,4 +6,4 @@
 
 #define print(format, ...) printf(format "\n", ##__VA_ARGS__);
 
-// #define DEBUG_TRACE_EXECUTION
+#define DEBUG_TRACE_EXECUTION

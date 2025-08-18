@@ -6,6 +6,13 @@ Use the *x86 native tools command prompt* to open vscode.
 Then, run `./build.ps1`
 You can clean build files using `./clean.ps1`
 
+## Frontend Backend
+**Frontend** Compiler
+**Representation** Bytecode
+**Execution** VM
+
+~ Parser, AST, Interpreter
+
 ## Chunks and stuff
 `chunk.h` A *chunk* is a chunk of bytecode ~ AST. It contains:
 * a vector that contains instructions aka code aka opcode
@@ -27,4 +34,4 @@ OP_CONSTANT
 The second byte is the index of the valueArray where the constant is stored.
 
 `vm.h`
-The VM contains a reference to a chunk (why not own it?), as well as the `ip` (instruction pointer) which indicates which instruction it's currently executing.
+The VM contains a reference to a chunk (so it doesn't copy after compilation), as well as the `ip` (instruction pointer) which indicates which instruction it's currently executing.

@@ -30,7 +30,8 @@ typedef enum InterpretResult
 void init_vm();
 void free_vm();
 
-InterpretResult interpret(Chunk* chunk);
+// takes ownership of source
+InterpretResult interpret(const char* source);
 
 void push(Value value);
 Value pop();

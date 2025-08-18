@@ -1,60 +1,93 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
 #include "chunk.h"
 #include "common.h"
 #include "debug.h"
 #include "vm.h"
 
-#include <windows.h>
+static void repl()
+{
+    char line[1024];
+    while (true)
+    {
+        printf("> ");
+        if (!fgets(line, sizeof(line) / sizeof(char), stdin))
+        {
+            printf("\n");
+            break;
+        }
 
-#include <profileapi.h>
-#include <stdio.h>
+        interpret(line);
+    }
+}
 
-int main(int argc, char* argv[])
+static char* read_file(const char* path)
+{
+    FILE* file = fopen(path, "rb");
+    if (file == NULL)
+    {
+        perror("Could not open file\n");
+        exit(74);
+    }
+
+    fseek(file, 0L, SEEK_END); // move pointer to the end of the file
+    size_t file_size = ftell(file);
+    rewind(file);
+
+    // add + 1: # of items + \0
+    char* buffer = malloc(sizeof(char) * (file_size + 1));
+    if (buffer == NULL)
+    {
+        fprintf(stderr, "Not enough memory to read \"%s\".", path);
+        exit(74);
+    }
+
+    size_t bytes_read = fread(buffer, sizeof(char), file_size, file);
+    if (bytes_read < file_size)
+    {
+        fprintf(stderr, "Could not read file \"%s\".", path);
+        exit(74);
+    }
+
+    buffer[bytes_read] = '\0'; // remember \0 terminates the string in memory
+
+    fclose(file);
+
+    return buffer;
+}
+
+static void run_file(const char* path)
+{
+    char* source = read_file(path);
+    InterpretResult result = interpret(source);
+    free(source);
+
+    if (result == INTERPRET_COMPILE_ERR)
+        exit(65);
+    if (result == INTERPRET_RUNTIME_ERR)
+        exit(70);
+}
+
+int main(int argc, const char* argv[])
 {
     init_vm();
-    Chunk chunk;
-    init_chunk(&chunk);
 
-    write_chunk(&chunk, OP_CONSTANT, 123);
-    int constant = add_constant(&chunk, 0.1);
-    write_chunk(&chunk, constant, 123);
-
-    for (int i = 0; i < 1'000'000; i++)
+    if (argc == 1)
     {
-        // write_chunk(&chunk, OP_CONSTANT, 123);
-        // constant = add_constant(&chunk, 0.1);
-        // write_chunk(&chunk, constant, 123);
-
-        write_chunk(&chunk, OP_NEGATE, 123);
+        repl();
     }
-    write_chunk(&chunk, OP_RETURN, 123);
-
-    LARGE_INTEGER StartingTime, EndingTime, ElapsedMicroseconds;
-    LARGE_INTEGER Frequency;
-
-    QueryPerformanceFrequency(&Frequency);
-    QueryPerformanceCounter(&StartingTime);
-
-    // code
-    interpret(&chunk);
-    QueryPerformanceCounter(&EndingTime);
-    ElapsedMicroseconds.QuadPart = EndingTime.QuadPart - StartingTime.QuadPart;
-
-    //
-    // We now have the elapsed number of ticks, along with the
-    // number of ticks-per-second. We use these values
-    // to convert to the number of elapsed microseconds.
-    // To guard against loss-of-precision, we convert
-    // to microseconds *before* dividing by ticks-per-second.
-    //
-
-    ElapsedMicroseconds.QuadPart *= 1000000;
-    ElapsedMicroseconds.QuadPart /= Frequency.QuadPart;
-
-    // "fast" - 2274
-    // "slow" *= 2400
-    printf("Time Used: %lld\n", ElapsedMicroseconds.QuadPart);
+    else if (argc == 2)
+    {
+        run_file(argv[1]);
+    }
+    else
+    {
+        fprintf(stderr, "Usage: clox [path]\n");
+        exit(64);
+    }
 
     free_vm();
-    free_chunk(&chunk);
     return 0;
 }

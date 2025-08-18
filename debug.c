@@ -1,6 +1,7 @@
+#include <stdio.h>
+
 #include "debug.h"
 #include "value.h"
-#include <stdio.h>
 
 static int constant_instr(const char* name, Chunk* chunk, int offset)
 {
