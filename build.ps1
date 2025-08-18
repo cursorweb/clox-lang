@@ -21,7 +21,7 @@ if ($LASTEXITCODE -eq 0) {
 
 # cls
 Write-Host "Running: ./main.exe"
-& .\$outputExe
+& .\$outputExe $args[0]
 
 $exitCode = $LASTEXITCODE
 Write-Host "Exit Code: $exitCode"

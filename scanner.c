@@ -140,62 +140,76 @@ static Token err_token(const char* err)
     return token;
 }
 
-static TType identifier_type()
-{
-    // clang-format off
-    // 'trie'
-    switch (scanner.start[0])
-    {
-    // 2 because nd is length 2
-    case 'a': return check_keyword(1, 2, "nd", TOKEN_AND);
-    case 'c': return check_keyword(1, 4, "lass", TOKEN_CLASS);
-    case 'e': return check_keyword(1, 3, "lse", TOKEN_ELSE);
-    case 'f':
-        // check to make sure the the keyword is *at least* 2 long
-        if (scanner.current - scanner.start > 1)
-        {
-            switch(scanner.start[1])
-            {
-                case 'a': return check_keyword(2, 3, "lse", TOKEN_FALSE);
-                case 'o': return check_keyword(2, 1, "r", TOKEN_FOR);
-                case 'u': return check_keyword(2, 1, "n", TOKEN_FUN);
-            }
-        }
-        break;
-    case 'i': return check_keyword(1, 1, "f", TOKEN_IF);
-    case 'n': return check_keyword(1, 2, "il", TOKEN_NIL);
-    case 'o': return check_keyword(1, 1, "r", TOKEN_OR);
-    case 'p': return check_keyword(1, 4, "rint", TOKEN_PRINT);
-    case 'r': return check_keyword(1, 5, "eturn", TOKEN_RETURN);
-    case 's': return check_keyword(1, 4, "uper", TOKEN_SUPER);
-    case 't':
-        if (scanner.current - scanner.start > 1)
-        {
-            switch (scanner.current[1])
-            {
-                case 'h': return check_keyword(2, 2, 'is', TOKEN_THIS);
-                case 'r': return check_keyword(2, 2, 'ue', TOKEN_TRUE);
-            }
-        }
-        break;
-    case 'v': return check_keyword(1, 2, "ar", TOKEN_VAR);
-    case 'w': return check_keyword(1, 4, "hile", TOKEN_WHILE);
-    }
-    // clang-format on
-
-    return TOKEN_IDENTIFIER;
-}
-
 static TType check_keyword(int start, int length, const char* rest, TType type)
 {
     if (
         // makes sure that the whole token is the same length as the keyword
         // for example, "a" "nd" -> start + length -> 1 + 2 == 3
         // an added bonus is that you don't accidentally read past the string
-        (scanner.start - scanner.current == start + length) &&
+        (scanner.current - scanner.start == start + length) &&
         memcmp(scanner.start + start, rest, length) == 0)
     {
         return type;
+    }
+
+    return TOKEN_IDENTIFIER;
+}
+
+static TType identifier_type()
+{
+    // trie structure
+    switch (scanner.start[0])
+    {
+    // 2 because nd is length 2
+    case 'a':
+        return check_keyword(1, 2, "nd", TOKEN_AND);
+    case 'c':
+        return check_keyword(1, 4, "lass", TOKEN_CLASS);
+    case 'e':
+        return check_keyword(1, 3, "lse", TOKEN_ELSE);
+    case 'f':
+        // check to make sure the the keyword is *at least* 2 long
+        if (scanner.current - scanner.start > 1)
+        {
+            switch (scanner.start[1])
+            {
+            case 'a':
+                return check_keyword(2, 3, "lse", TOKEN_FALSE);
+            case 'o':
+                return check_keyword(2, 1, "r", TOKEN_FOR);
+            case 'u':
+                return check_keyword(2, 1, "n", TOKEN_FUN);
+            }
+        }
+        break;
+    case 'i':
+        return check_keyword(1, 1, "f", TOKEN_IF);
+    case 'n':
+        return check_keyword(1, 2, "il", TOKEN_NIL);
+    case 'o':
+        return check_keyword(1, 1, "r", TOKEN_OR);
+    case 'p':
+        return check_keyword(1, 4, "rint", TOKEN_PRINT);
+    case 'r':
+        return check_keyword(1, 5, "eturn", TOKEN_RETURN);
+    case 's':
+        return check_keyword(1, 4, "uper", TOKEN_SUPER);
+    case 't':
+        if (scanner.current - scanner.start > 1)
+        {
+            switch (scanner.current[1])
+            {
+            case 'h':
+                return check_keyword(2, 2, "is", TOKEN_THIS);
+            case 'r':
+                return check_keyword(2, 2, "ue", TOKEN_TRUE);
+            }
+        }
+        break;
+    case 'v':
+        return check_keyword(1, 2, "ar", TOKEN_VAR);
+    case 'w':
+        return check_keyword(1, 4, "hile", TOKEN_WHILE);
     }
 
     return TOKEN_IDENTIFIER;
