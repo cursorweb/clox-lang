@@ -1,3 +1,6 @@
 #pragma once
 
-void compile(const char* source);
+#include "vm.h"
+
+// returns TRUE if compiler had an error
+bool compile(const char* source, Chunk* chunk);

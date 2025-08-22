@@ -1,7 +1,7 @@
 #include "chunk.h"
 #include "memory.h"
 
-// TODO: why not just malloc inside?
+// takes a reference so that Chunk can be owned somewhere
 void init_chunk(Chunk* chunk)
 {
     chunk->count = 0;

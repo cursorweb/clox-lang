@@ -4,7 +4,10 @@
         "debug.h": "c",
         "common.h": "c",
         "time.h": "c",
-        "profileapi.h": "c"
+        "profileapi.h": "c",
+        "compiler.h": "c",
+        "vm.h": "c",
+        "scanner.h": "c"
     },
     "files.exclude": {
         "**/*.obj": true,

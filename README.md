@@ -36,8 +36,13 @@ The second byte is the index of the valueArray where the constant is stored.
 `vm.h`
 The VM contains a reference to a chunk (so it doesn't copy after compilation), as well as the `ip` (instruction pointer) which indicates which instruction it's currently executing.
 
+## Compiler
+Rather than parsing to produce an AST and then turning it into bytecode, the compiler is going to do the two in the same pass.
+
 ## Reading
 [Dragon Book](https://en.wikipedia.org/wiki/Compilers:_Principles,_Techniques,_and_Tools)
 [Trie](https://en.wikipedia.org/wiki/Trie)
 [Finite State Machine DFA](https://en.wikipedia.org/wiki/Deterministic_finite_automaton)
 [String Interpolation](https://github.com/wren-lang/wren/blob/8fae8e4f1e490888e2cc9b2ea6b8e0d0ff9dd60f/src/vm/wren_compiler.c#L118-L130)
+[Pratt Parser](https://matklad.github.io/2020/04/13/simple-but-powerful-pratt-parsing.html)
+[Pratt Parser (munificent)](https://journal.stuffwithstuff.com/2011/03/19/pratt-parsers-expression-parsing-made-easy/)

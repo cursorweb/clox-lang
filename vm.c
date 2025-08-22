@@ -22,6 +22,7 @@ void free_vm()
 }
 
 // static makes this function private
+// goes through the bytecode (vm.chunk), and interprets it.
 static InterpretResult run()
 {
 // vm.ip++; return *(vm.ip)
@@ -94,10 +95,26 @@ static InterpretResult run()
 #undef BINARY_OP
 }
 
+// the main function where everything is done:
+// compiling, and running
 InterpretResult interpret(const char* source)
 {
-    compile(source);
-    return INTERPRET_OK;
+    Chunk chunk;
+    init_chunk(&chunk);
+
+    if (!compile(source, &chunk))
+    {
+        free_chunk(&chunk);
+        return INTERPRET_COMPILE_ERR;
+    }
+
+    vm.chunk = &chunk;
+    vm.ip = vm.chunk->code;
+
+    InterpretResult result = run();
+
+    free_chunk(&chunk);
+    return result;
 }
 
 void push(Value value)
