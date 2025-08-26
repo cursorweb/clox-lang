@@ -65,9 +65,13 @@ static void run_file(const char* path)
     free(source);
 
     if (result == INTERPRET_COMPILE_ERR)
+    {
         exit(65);
+    }
     if (result == INTERPRET_RUNTIME_ERR)
+    {
         exit(70);
+    }
 }
 
 int main(int argc, const char* argv[])
