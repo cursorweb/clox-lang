@@ -46,3 +46,9 @@ Rather than parsing to produce an AST and then turning it into bytecode, the com
 [String Interpolation](https://github.com/wren-lang/wren/blob/8fae8e4f1e490888e2cc9b2ea6b8e0d0ff9dd60f/src/vm/wren_compiler.c#L118-L130)
 [Pratt Parser](https://matklad.github.io/2020/04/13/simple-but-powerful-pratt-parsing.html)
 [Pratt Parser (munificent)](https://journal.stuffwithstuff.com/2011/03/19/pratt-parsers-expression-parsing-made-easy/)
+
+## New Features
+* Format Strings
+* Power
+* Ternary Operator
+* Arrays

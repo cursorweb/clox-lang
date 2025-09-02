@@ -35,6 +35,7 @@ typedef enum Precedence
 
 typedef void (*ParseFn)();
 
+// Kind of a union here, for example '-' has both a prefix and an infix
 typedef struct ParseRule
 {
     // as `-5`
