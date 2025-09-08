@@ -31,6 +31,7 @@ typedef enum TType
     TOKEN_SEMICOLON,
     TOKEN_SLASH,
     TOKEN_STAR,
+    TOKEN_POW,
 
     // One or two character tokens.
     TOKEN_BANG,

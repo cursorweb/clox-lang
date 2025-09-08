@@ -28,6 +28,7 @@ typedef enum Precedence
     PREC_COMPARISON, // < > <= >=
     PREC_TERM,       // + -
     PREC_FACTOR,     // * /
+    PREC_POWER,      // ^
     PREC_UNARY,      // ! -
     PREC_CALL,       // . ()
     PREC_PRIMARY
@@ -69,6 +70,10 @@ static void error_at(Token* token, const char* message)
     if (token->type == TOKEN_EOF)
     {
         fprintf(stderr, "at end");
+    }
+    else if (token->type == TOKEN_ERROR)
+    {
+        // there is no token to be displayed
     }
     else
     {
@@ -166,9 +171,17 @@ static void binary()
 {
     TType op_type = parser.prev.type;
     ParseRule* rule = get_rule(op_type);
-    // the expr to the right will always have a higher precedence
-    // (left-associative)
-    parse_precedence((Precedence)(rule->precedence + 1));
+
+    if (op_type == TOKEN_POW)
+    {
+        parse_precedence((Precedence)(rule->precedence));
+    }
+    else
+    {
+        // the expr to the right will always have a higher precedence
+        // (left-associative)
+        parse_precedence((Precedence)(rule->precedence + 1));
+    }
 
     switch (op_type)
     {
@@ -205,6 +218,10 @@ static void binary()
         break;
     case TOKEN_SLASH:
         emit_byte(OP_DIV);
+        break;
+
+    case TOKEN_POW:
+        emit_byte(OP_POW);
         break;
     default:
         return; // Unreachable.
@@ -331,6 +348,7 @@ ParseRule rules[] = {
     [TOKEN_SEMICOLON] = {NULL, NULL, PREC_NONE},
     [TOKEN_SLASH] = {NULL, binary, PREC_FACTOR},
     [TOKEN_STAR] = {NULL, binary, PREC_FACTOR},
+    [TOKEN_POW] = {NULL, binary, PREC_POWER},
     [TOKEN_BANG] = {unary, NULL, PREC_NONE},
     [TOKEN_BANG_EQUAL] = {NULL, binary, PREC_EQUALITY},
     [TOKEN_EQUAL] = {NULL, NULL, PREC_NONE},

@@ -1,3 +1,4 @@
+#include <math.h>
 #include <stdarg.h>
 #include <stdio.h>
 
@@ -133,6 +134,19 @@ static InterpretResult run()
         case OP_DIV:
             BINARY_OP(NUM_VAL, /);
             break;
+        case OP_POW:
+        {
+            if (!IS_NUM(peek(0)) || !IS_NUM(peek(1)))
+            {
+                runtime_err("Operands must be numbers");
+                return INTERPRET_RUNTIME_ERR;
+            }
+            double b = AS_NUM(vm.stack_top[-1]);
+            double a = AS_NUM(vm.stack_top[-2]);
+            vm.stack_top[-2] = NUM_VAL(pow(a, b));
+            vm.stack_top--;
+        }
+        break;
         case OP_NEGATE:
         {
             if (!IS_NUM(peek(0)))

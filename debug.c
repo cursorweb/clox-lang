@@ -76,6 +76,9 @@ int disassemble_instr(Chunk* chunk, int offset)
     case OP_DIV:
         return simple_instr("OP_DIV", offset);
 
+    case OP_POW:
+        return simple_instr("OP_POW", offset);
+
     case OP_NEGATE:
         return simple_instr("OP_NEGATE", offset);
 

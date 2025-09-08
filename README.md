@@ -49,9 +49,13 @@ Rather than parsing to produce an AST and then turning it into bytecode, the com
 
 ## New Features
 * Format Strings
-* Power
+* Power (**Added**)
 * Ternary Operator
 * Arrays
 * Weird: Option to REMOVE TYPE CHECKING and be SUPER UNSAFE for fast
 * `a?` short circuit if a is null
-* `a!` return true if a is not nil
+* `a <=> b`
+* `a++`; `a += 5`
+* `import "file_path"`
+* `import stdlib;`:
+    * `import math;`

@@ -313,6 +313,8 @@ Token scan_token()
         return make_token(TOKEN_SLASH);
     case '*':
         return make_token(TOKEN_STAR);
+    case '^':
+        return make_token(TOKEN_POW);
     case '!':
         return make_token(match('=') ? TOKEN_BANG_EQUAL : TOKEN_BANG);
     case '=':

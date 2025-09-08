@@ -17,6 +17,7 @@ typedef enum OpCode
     OP_SUB,
     OP_MULT,
     OP_DIV,
+    OP_POW,
     OP_NEGATE,
     OP_RETURN
 } OpCode;
