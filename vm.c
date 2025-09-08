@@ -1,8 +1,10 @@
-#include "vm.h"
+#include <stdarg.h>
+#include <stdio.h>
+
 #include "common.h"
 #include "compiler.h"
 #include "debug.h"
-#include <stdio.h>
+#include "vm.h"
 
 VM vm; // global variable :(
 
@@ -19,6 +21,33 @@ void init_vm()
 
 void free_vm()
 {
+    // for now, the stack you just let C clean up
+}
+
+static void runtime_err(const char* format, ...)
+{
+    va_list args;
+    va_start(args, format);
+    vfprintf(stderr, format, args);
+    va_end(args);
+    fputs("\n", stderr);
+
+    // this gets the index: (vm.ip - vm.chunk->code) returns 0+, but vm.ip is
+    // the *next* instruction
+    size_t instr_idx = vm.ip - 1 - vm.chunk->code;
+    int line = vm.chunk->lines[instr_idx];
+    fprintf(stderr, "[line %d] in script\n", line);
+    reset_stack();
+}
+
+static Value peek(int dist)
+{
+    return vm.stack_top[-1 - dist];
+}
+
+static bool is_falsey(Value val)
+{
+    return IS_NIL(val) || (IS_BOOL(val) && !AS_BOOL(val));
 }
 
 // static makes this function private
@@ -31,12 +60,17 @@ static InterpretResult run()
 #define READ_CONSTANT() (vm.chunk->constants.values[READ_BYTE()])
 // using a do while loop lets you add semicolon at the end of it.
 // b comes first, because last in *first* out!
-#define BINARY_OP(op)                                                          \
+#define BINARY_OP(value_type, op)                                              \
     do                                                                         \
     {                                                                          \
-        double b = vm.stack_top[-1];                                           \
-        double a = vm.stack_top[-2];                                           \
-        vm.stack_top[-2] = a op b;                                             \
+        if (!IS_NUM(peek(0)) || !IS_NUM(peek(1)))                              \
+        {                                                                      \
+            runtime_err("Operands must be numbers");                           \
+            return INTERPRET_RUNTIME_ERR;                                      \
+        }                                                                      \
+        double b = AS_NUM(vm.stack_top[-1]);                                   \
+        double a = AS_NUM(vm.stack_top[-2]);                                   \
+        vm.stack_top[-2] = value_type(a op b);                                 \
         vm.stack_top--;                                                        \
     } while (false)
 
@@ -63,22 +97,51 @@ static InterpretResult run()
             push(constant);
         }
         break;
+        case OP_NIL:
+            push(NIL_VAL);
+            break;
+        case OP_TRUE:
+            push(BOOL_VAL(true));
+            break;
+        case OP_FALSE:
+            push(BOOL_VAL(false));
+            break;
+        case OP_NOT:
+            vm.stack_top[-1] = BOOL_VAL(is_falsey(vm.stack_top[-1]));
+            break;
+        case OP_EQUAL:
+            Value b = vm.stack_top[-1];
+            Value a = vm.stack_top[-2];
+            vm.stack_top[-2] = BOOL_VAL(values_equal(a, b));
+            vm.stack_top--;
+            break;
+        case OP_GRTR:
+            BINARY_OP(BOOL_VAL, >);
+            break;
+        case OP_LESS:
+            BINARY_OP(BOOL_VAL, <);
+            break;
         case OP_ADD:
-            BINARY_OP(+);
+            BINARY_OP(NUM_VAL, +);
             break;
         case OP_SUB:
-            BINARY_OP(-);
+            BINARY_OP(NUM_VAL, -);
             break;
         case OP_MULT:
-            BINARY_OP(*);
+            BINARY_OP(NUM_VAL, *);
             break;
         case OP_DIV:
-            BINARY_OP(/);
+            BINARY_OP(NUM_VAL, /);
             break;
         case OP_NEGATE:
         {
+            if (!IS_NUM(peek(0)))
+            {
+                runtime_err("'-' can only be used on numbers.");
+                return INTERPRET_RUNTIME_ERR;
+            }
             // a[b] is same as *(vm.stack_top - 1)
-            vm.stack_top[-1] = -vm.stack_top[-1];
+            vm.stack_top[-1] = NUM_VAL(-AS_NUM(vm.stack_top[-1]));
         }
         break;
         case OP_RETURN:

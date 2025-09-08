@@ -52,3 +52,6 @@ Rather than parsing to produce an AST and then turning it into bytecode, the com
 * Power
 * Ternary Operator
 * Arrays
+* Weird: Option to REMOVE TYPE CHECKING and be SUPER UNSAFE for fast
+* `a?` short circuit if a is null
+* `a!` return true if a is not nil

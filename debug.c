@@ -50,6 +50,23 @@ int disassemble_instr(Chunk* chunk, int offset)
     case OP_CONSTANT:
         return constant_instr("OP_CONSTANT", chunk, offset);
 
+    case OP_NIL:
+        return simple_instr("OP_NIL", offset);
+    case OP_TRUE:
+        return simple_instr("OP_TRUE", offset);
+    case OP_FALSE:
+        return simple_instr("OP_FALSE", offset);
+
+    case OP_NOT:
+        return simple_instr("OP_NOT", offset);
+
+    case OP_EQUAL:
+        return simple_instr("OP_EQUAL", offset);
+    case OP_GRTR:
+        return simple_instr("OP_GRTR", offset);
+    case OP_LESS:
+        return simple_instr("OP_LESS", offset);
+
     case OP_ADD:
         return simple_instr("OP_ADD", offset);
     case OP_SUB:

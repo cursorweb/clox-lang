@@ -8,7 +8,12 @@
         "compiler.h": "c",
         "vm.h": "c",
         "scanner.h": "c",
-        "string.h": "c"
+        "string.h": "c",
+        "xutility": "c",
+        "type_traits": "c",
+        "xtr1common": "c",
+        "stddef.h": "c",
+        "value.h": "c"
     },
     "files.exclude": {
         "**/*.obj": true,
